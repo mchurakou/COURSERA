@@ -47,6 +47,7 @@ public class QuickUnion {
         if (i == j)
             return;
 
+
         if (sz[i] < sz[j]){
             id[i]= j;
             sz[j] += sz[i];
