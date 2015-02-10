@@ -21,7 +21,6 @@ public class Percolation {
 
     public void open(int y, int x){
         checkIndeces(y, x);
-
         int current = xyTo1D(x, y);
         //top
         if (y - 1 > 0 && isOpen(y - 1, x)) {
@@ -63,6 +62,6 @@ public class Percolation {
 
     private void checkIndeces(int y, int x){
         if (y <= 0 || y > size || x <= 0 || x > size)
-            throw new IndexOutOfBoundsException("index out of bounds");
+            throw new IndexOutOfBoundsException("index out of bounds " + y +" " +  x );
     }
 }
