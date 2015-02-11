@@ -3,53 +3,50 @@
  */
 public class PercolationStats {
 
-        double mean = 0;
-        double stddev = 0;
-        double[] x;
+       private  double mean = 0;
+       private double stddev = 0;
+       private double[] XX;
 
-        double lo;
-        double hi;
-    int T;
+        private double lo;
+        private double hi;
+        private int T;
 
     // perform T independent experiments on an N-by-N grid
         public PercolationStats(int N, int T)  {
             this.T = T;
-            if (N <=0 || T <=0){
+            if (N <= 0 || T <= 0) {
                 throw new IllegalArgumentException("wrong arg");
             }
 
-            x = new double[T];
+            XX = new double[T];
 
             for (int i = 0; i < T; i++) {
                 Percolation perc = new Percolation(N);
                 int turn = 0;
-                while (!perc.percolates()){
+                while (!perc.percolates()) {
 
                     int x = (int) (StdRandom.uniform() * N) + 1;
                     int y = (int) (StdRandom.uniform() * N) + 1;
-                    if (!perc.isOpen(y, x)){
+                    if (!perc.isOpen(y, x)) {
                         perc.open(y, x);
                         turn++;
 
                     }
 
                 }
-                x[i] =  (double) turn /  (N * N);
-
-
-
+                XX[i] =  (double) turn /  (N * N);
 
             }
 
 
-            for (double s : x){
+            for (double s : XX) {
                 mean += s;
             }
 
             mean /= T;
 
-            for (double s : x){
-                stddev += Math.pow(s - mean , 2);
+            for (double s : XX) {
+                stddev += (s - mean) * (s - mean);
             }
 
             stddev = Math.sqrt(stddev / (T - 1));
@@ -67,7 +64,7 @@ public class PercolationStats {
 
     // sample standard deviation of percolation threshold
         public double stddev()  {
-            if (T == 1){
+            if (T == 1) {
                 return Double.NaN;
             } else {
                 return stddev;
@@ -75,7 +72,7 @@ public class PercolationStats {
         }
 
     // low  endpoint of 95% confidence interval
-        public double confidenceLo()    {
+        public double confidenceLo() {
             if (T == 1){
                 return Double.NaN;
             } else {
@@ -85,8 +82,8 @@ public class PercolationStats {
         }
 
     // high endpoint of 95% confidence interval
-        public double confidenceHi()    {
-            if (T == 1){
+        public double confidenceHi(){
+            if (T == 1) {
                 return Double.NaN;
             } else {
                 return hi;
@@ -100,10 +97,10 @@ public class PercolationStats {
             int n = Integer.valueOf(args[0]);
             int t = Integer.valueOf(args[1]);
 
-            PercolationStats stat = new PercolationStats(n,t);
+            PercolationStats stat = new PercolationStats(n, t);
             System.out.println("mean: " + stat.mean());
             System.out.println("stddev: " + stat.stddev());
-            System.out.println("95% confidence interval: " + stat.confidenceLo() + " " + stat.confidenceHi() );
+            System.out.println("95% confidence interval: " + stat.confidenceLo() + " " + stat.confidenceHi());
 
         }
 

@@ -1,10 +1,10 @@
 public class Percolation {
 
-    boolean[][] matrix;
-    WeightedQuickUnionUF uf;
-    int size;
+    private boolean[][] matrix;
+    private WeightedQuickUnionUF uf;
+    private int size;
 
-    public Percolation(int n){
+    public Percolation(int n) {
         if (n <= 0)
             throw new IndexOutOfBoundsException("wrong size");
 
@@ -13,13 +13,13 @@ public class Percolation {
 
         uf = new WeightedQuickUnionUF(n * n + 2);
 
-        for (int i = 0; i < n; i++){
+        for (int i = 0; i < n; i++) {
             uf.union(0, xyTo1D(i + 1, 1));
             uf.union(n * n + 1, xyTo1D(i + 1, n));
         }
     }
 
-    public void open(int y, int x){
+    public void open(int y, int x) {
         checkIndeces(y, x);
         int current = xyTo1D(x, y);
         //top
@@ -27,7 +27,7 @@ public class Percolation {
             uf.union(current, xyTo1D(x, y - 1));
         }
         //right
-        if (x + 1 <= size && isOpen(y,x + 1)){
+        if (x + 1 <= size && isOpen(y, x + 1)) {
             uf.union(current, xyTo1D(x + 1, y));
         }
         //bottom
@@ -42,26 +42,26 @@ public class Percolation {
 
         matrix[y - 1][x - 1] = true;
     }
-    public boolean isOpen(int y, int x){
+    public boolean isOpen(int y, int x) {
         checkIndeces(y, x);
 
         return matrix[y - 1][x - 1];
     }
-    public boolean isFull(int y, int x){
+    public boolean isFull(int y, int x) {
         checkIndeces(y, x);
         return uf.connected(0, xyTo1D(x, y)) && isOpen(y, x);
     }
 
-    public boolean percolates(){
+    public boolean percolates() {
         return uf.connected(0, uf.count() - 1);
     }
 
-    private int xyTo1D(int x, int y){
+    private int xyTo1D(int x, int y) {
         return (y - 1) * size + (x - 1) + 1;
     }
 
-    private void checkIndeces(int y, int x){
+    private void checkIndeces(int y, int x) {
         if (y <= 0 || y > size || x <= 0 || x > size)
-            throw new IndexOutOfBoundsException("index out of bounds " + y +" " +  x );
+            throw new IndexOutOfBoundsException("index out of bounds " + y + " " +  x);
     }
 }
