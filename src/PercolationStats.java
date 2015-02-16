@@ -73,7 +73,7 @@ public class PercolationStats {
 
     // low  endpoint of 95% confidence interval
         public double confidenceLo() {
-            if (T == 1){
+            if (T == 1) {
                 return Double.NaN;
             } else {
                 return lo;
@@ -82,7 +82,7 @@ public class PercolationStats {
         }
 
     // high endpoint of 95% confidence interval
-        public double confidenceHi(){
+        public double confidenceHi() {
             if (T == 1) {
                 return Double.NaN;
             } else {
