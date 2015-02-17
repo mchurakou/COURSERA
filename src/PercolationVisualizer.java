@@ -75,8 +75,9 @@ public class PercolationVisualizer {
             perc.open(i, j);
             draw(perc, N);
             StdDraw.show(DELAY);
+            System.out.println("i=" + i + " j= " + j +" percolates=" + perc.percolates());
         }
 
-        System.out.println(perc.percolates());
+
     }
 }
