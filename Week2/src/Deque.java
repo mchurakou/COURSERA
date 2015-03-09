@@ -1,77 +1,120 @@
 import java.util.Iterator;
-import java.util.LinkedList;
 
 public class Deque<Item> implements Iterable<Item> {
-    private LinkedList<Item> list;
+    private Node first;
+    private Node last;
 
-    // construct an empty deque
+    private class Node {
+        private Item item;
+        private Node next;
+        private Node prev;
+
+        public Item getItem() { return item; }
+        public Node getNext() { return next; }
+        public Node getPrev() { return prev; }
+        public void setItem(Item i) { this.item = i; }
+        public void setNext(Node n) { this.next = n; }
+        public void setPrev(Node p) { this.prev = p; }
+    }
+
     public Deque() {
-        list = new LinkedList<Item>();
+        // construct an empty deque
+        first = null;
+        last = null;
     }
-
-    // is the deque empty?
     public boolean isEmpty() {
-        return list.isEmpty();
+        // is the deque empty?
+        if (first == null)
+            return true;
+        return false;
     }
-
-    // return the number of items on the deque
     public int size() {
-        return list.size();
+        // return the number of items on the deque
+        if (isEmpty()) return 0;
+        int count = 1;
+        Node n = first;
+        while (n != last) {
+            count++;
+            n = n.next;
+        }
+        return count;
     }
-
-    // add the item to the front
     public void addFirst(Item item) {
-        if (item == null) {
-            throw new NullPointerException();
+        // insert the item at the front
+        if (item == null) throw new java.lang.NullPointerException();
+        Node n = new Node();
+        n.item = item;
+        if (first != null) {
+            n.next = first;
+            first.prev = n;
+            n.prev = null;
+            first = n;
+        } else {
+            first = n;
+            last = n;
+            n.prev = null;
+            n.next = null;
         }
-        list.addFirst(item);
     }
-
-    // add the item to the end
     public void addLast(Item item) {
-        if (item == null) {
-            throw new NullPointerException();
+        // insert the item at the end
+        if (item == null) throw new java.lang.NullPointerException();
+        Node n = new Node();
+        n.item = item;
+        if (last != null) {
+            n.prev = last;
+            last.next = n;
+            n.next = null;
+            last = n;
+        } else {
+            first = n;
+            last = n;
+            n.prev = null;
+            n.next = null;
         }
-
-        list.addLast(item);
     }
-    // remove and return the item from the front
     public Item removeFirst() {
-        return list.removeFirst();
+        // delete and return the item at the front
+        if (first == null) throw new java.util.NoSuchElementException();
+        Item n = first.item;
+        first = first.next;
+        if (first != null) {
+            first.prev = null;
+        } else {
+            last = null;
+        }
+        return n;
     }
-
-    // remove and return the item from the end
     public Item removeLast() {
-        return list.removeLast();
+        // delete and return the item at the end
+        if (last == null) throw new java.util.NoSuchElementException();
+        Item n = last.item;
+        last = last.prev;
+        if (last != null) {
+            last.next = null;
+        } else {
+            first = null;
+        }
+        return n;
     }
-
-    // return an iterator over items in order from front to end
     public Iterator<Item> iterator() {
-        final Iterator<Item> it =  list.iterator();
+        // return an iterator over items in order from front to end
 
-        return new Iterator<Item>() {;
-            @Override
-            public boolean hasNext() {
-                return it.hasNext();
-            }
-
-            @Override
-            public Item next() {
-                return it.next();
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-        };
+        return new ListIterator();
     }
-
-    // unit testing
-    public static void main(String[] args) {
-        Deque deq = new Deque();
-        deq.addFirst(1);
-        deq.addFirst(2);
-        System.out.println(deq.removeLast());
+    private class ListIterator implements Iterator<Item> {
+        private Node current = first;
+        public boolean hasNext() {
+            return current != null;
+        }
+        public Item next() {
+            if (current == null) throw new java.util.NoSuchElementException();
+            Item item = current.item;
+            current = current.next;
+            return item;
+        }
+        public void remove() {
+            throw new java.lang.UnsupportedOperationException();
+        }
     }
 }

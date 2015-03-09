@@ -1,85 +1,94 @@
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
+
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
-
-    private ArrayList<Item> list;
-
-    // construct an empty randomized queue
-
-
+    private Item[] queue;
+    private int N;
+    private int capacity;
     public RandomizedQueue() {
-        list = new ArrayList<Item>();
-
-
+        // construct an empty randomized queue
+        N = 0;
+        capacity = 1;
+        queue = (Item[]) new Object[capacity];
     }
-
-    // is the queue empty?
     public boolean isEmpty() {
-        return list.isEmpty();
+        // is the queue empty?
+        return N == 0;
     }
-
-    // return the number of items on the queue
     public int size() {
-        return list.size();
+        // return the number of items on the queue
+        return N;
     }
-
-    // add the item
     public void enqueue(Item item) {
-        if (item == null) {
-            throw new NullPointerException();
+        // add the item
+        if (item == null) throw new java.lang.NullPointerException();
+        if (N + 1 > capacity) {
+            resizePlus();
         }
-
-        list.add(item);
-
+        queue[N++] = item;
     }
-
-    // remove and return a random item
+    private void resizePlus() {
+        capacity *= 2;
+        Item[] newQueue = (Item[]) new Object[capacity];
+        int index = 0;
+        for (Item i : queue) {
+            newQueue[index++] = i;
+        }
+        queue = newQueue;
+    }
+    private void resizeMinus() {
+        capacity /= 2;
+        Item[] newQueue = (Item[]) new Object[capacity];
+        int index = 0;
+        for (int i = 0; i < capacity; i++) {
+            newQueue[index++] = queue[i];
+        }
+        queue = newQueue;
+    }
     public Item dequeue() {
-        if (list.isEmpty()){
-            throw new NoSuchElementException();
+        // delete and return a random item
+        if (isEmpty()) throw new java.util.NoSuchElementException();
+        int i = StdRandom.uniform(N);
+        Item ret = queue[i];
+        queue[i] = queue[--N];
+        queue[N] = null;
+        if (capacity / 4 > N) {
+            resizeMinus();
         }
-
-        int index  = (int) (StdRandom.uniform() * list.size());
-        return list.remove(index);
+        return ret;
     }
+    public Item sample() {
+        // return (but do not delete) a random item
+        if (isEmpty()) throw new java.util.NoSuchElementException();
+        return queue[StdRandom.uniform(N)];
+    }
+    public Iterator<Item> iterator() {
+        // return an iterator over items in order from front to end
+        return new ListIterator();
+    }
+    private class ListIterator implements Iterator<Item> {
+        private int current = 0;
+        private int[] shuffledIndexes = new int[N];
 
-    // return (but do not remove) a random item
-    public Item sample()    {
-        if (list.isEmpty()){
-            throw new NoSuchElementException();
+        public boolean hasNext() {
+            if (current == 0) {
+                for (int i = 0; i < N; i++)
+                    shuffledIndexes[i] = i;
+                StdRandom.shuffle(shuffledIndexes);
+            }
+            return current < N;
         }
-
-        int index  = (int) (StdRandom.uniform() * list.size());
-        return list.get(index);
-    }
-    // return an independent iterator over items in random order
-
-    public Iterator<Item> iterator()  {
-        final ArrayList<Item> copy = new ArrayList<Item>(list);
-
-        return new Iterator<Item>() {
-            @Override
-            public boolean hasNext() {
-                return copy.isEmpty();
+        public Item next() {
+            if (current == 0) {
+                for (int i = 0; i < N; i++)
+                    shuffledIndexes[i] = i;
+                StdRandom.shuffle(shuffledIndexes);
             }
-
-            @Override
-            public Item next() {
-                int index  = (int) (StdRandom.uniform() * list.size());
-                return copy.remove(index);
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-        };
-    }
-
-    public static void main(String[] args) {
-        RandomizedQueue deq = new RandomizedQueue();
-        deq.sample();
+            if (current >= N || size() == 0) throw new java.util.NoSuchElementException();
+            return queue[shuffledIndexes[current++]];
+        }
+        public void remove() {
+            throw new java.lang.UnsupportedOperationException();
+        }
     }
 }
